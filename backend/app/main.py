@@ -3,6 +3,13 @@ from app.services.data_loader import load_movies
 from app.services.preprocess import load_links, load_raw_movielens, preprocess_movies, save_clean_movies
 from app.services.tmdb import fetch_tmdb_movie
 from dotenv import load_dotenv
+from app.services.preprocess import (
+    load_raw_movielens,
+    load_links,
+    preprocess_movies,
+    enrich_with_tmdb,
+    save_clean_movies
+)
 
 
 load_dotenv()
@@ -28,15 +35,15 @@ def get_movies():
 @app.post("/preprocess")
 def run_preprocess():
     """
-    Builds initial movie list + TMDB mapping.
-    Example return:
-    {"processed": 62423}
+    Processes MovieLens + TMDB and saves final JSON.
+    Example return: {"processed": 62000}
     """
     df = load_raw_movielens()
     link_map = load_links()
-    cleaned = preprocess_movies(df, link_map)
-    save_clean_movies(cleaned)
-    return {"processed": len(cleaned)}  # example: {"processed": 62423}
+    base = preprocess_movies(df, link_map)
+    enriched = enrich_with_tmdb(base)
+    save_clean_movies(enriched)
+    return {"processed": len(enriched)}  # example: {"processed": 62423}
 
 
 
