@@ -1,6 +1,12 @@
 from fastapi import FastAPI
 from app.services.data_loader import load_movies
-from app.services.preprocess import load_raw_movielens, preprocess_movies, save_clean_movies
+from app.services.preprocess import load_links, load_raw_movielens, preprocess_movies, save_clean_movies
+from app.services.tmdb import fetch_tmdb_movie
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 
 app = FastAPI()
 
@@ -22,12 +28,30 @@ def get_movies():
 @app.post("/preprocess")
 def run_preprocess():
     """
-    Triggers raw → clean processing.
-    Returns count of processed movies.
+    Builds initial movie list + TMDB mapping.
     Example return:
-    {"processed": 60000}
+    {"processed": 62423}
     """
     df = load_raw_movielens()
-    cleaned = preprocess_movies(df)
+    link_map = load_links()
+    cleaned = preprocess_movies(df, link_map)
     save_clean_movies(cleaned)
-    return {"processed": len(cleaned)}  # example: {"processed": 60000}
+    return {"processed": len(cleaned)}  # example: {"processed": 62423}
+
+
+
+@app.get("/test_tmdb/{tmdb_id}")
+def test_tmdb(tmdb_id: int):
+    """
+    Fetch single movie from TMDB.
+    Example return:
+    {
+      "id": 550,
+      "title": "Fight Club",
+      "genres": ["Drama"],
+      "cast": ["Brad Pitt", "Edward Norton"],
+      ...
+    }
+    """
+    data = fetch_tmdb_movie(tmdb_id)
+    return data 
