@@ -1,0 +1,33 @@
+# Virtual environment
+.venv/
+env/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS junk
+.DS_Store
+
+# Data files
+data/*.csv
+data/*.json
+data/*.tsv
+data/*.xlsx
+
+# Model weights (we'll upload manually or store elsewhere)
+models/*.bin
+models/*.pt
+models/*.pkl
+
+# FAISS index
+faiss/*.faiss
+faiss/*.npy
+faiss/*.pkl
+
+# Environment variables
+.env
+
+# Node modules for frontend
+frontend/node_modules/
