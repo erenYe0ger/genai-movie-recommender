@@ -19,7 +19,6 @@ data/*.xlsx
 # Model weights (we'll upload manually or store elsewhere)
 models/*.bin
 models/*.pt
-models/*.pkl
 
 # FAISS index
 faiss/*.faiss
