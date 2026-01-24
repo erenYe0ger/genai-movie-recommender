@@ -1,19 +1,20 @@
 from fastapi import FastAPI
-from dotenv import load_dotenv
-from app.services.data_loader import load_movies
+from fastapi.middleware.cors import CORSMiddleware
 
-load_dotenv()
-app = FastAPI()
+from app.routers import movies
 
-@app.get("/health")
-def health_check():
-    return {"status": "ok"}  # example -> {"status": "ok"}
+app = FastAPI(title="GenAI Movie Recommender API")
 
-@app.get("/movies")
-def get_movies():
-    """
-    Returns movies from cleaned data.
-    Example:
-    [{"id": 19995, "title": "Avatar", ...}, ...]
-    """
-    return load_movies()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(movies.router)
+
+@app.get("/")
+def root():
+    return {"status": "ok", "message": "backend running"}
